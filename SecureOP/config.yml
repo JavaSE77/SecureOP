@@ -1,0 +1,23 @@
+OPpassword: 'password'
+#Kick people without permission to use /op?
+KickWithoutPerms: true
+#Ban poeple who use incorrect passwords?
+BanOnBadPassword: true
+#This command will run whenever someone uses the wrong password (Set to '' to disable)
+BadCommand: 'adminchat Someone is using /op!'
+#Broadcast a message when a player is OPed?
+BroadcastOP: true
+#Allow offline players to be opped? 
+OPofflinePlayers: true
+#Block /bukkit:op? WARNING! SETTING THIS TO FALSE CREATES A SERVER SECURITY PROBLEM
+BlockBukkit: true
+#Message online admins when a player tries to uses command /op? (Permission Secureop.receive )
+MessageAdmins: true
+#
+#Messages
+#
+OpMsg: '&bPlayer &5%player% &bhas been OPed by &5%sender%'
+AdminMessageNoPerm: '&4Player %sender% tried to use /op!'
+AdminMessageBadPass: '&4Admin %sender% tried to op %player%'
+ErrorNoPerms: '&cError, you cant use that command because it can damage the server!'
+BanMessage: '&4YOU ARE NOT ALLOWED TO TRY AND GUESS THE PASSWORD OF THE COMMAND /OP'
