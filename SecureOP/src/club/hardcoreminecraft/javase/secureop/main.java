@@ -18,7 +18,7 @@ public class main extends JavaPlugin {
 	  //register new events: 		
 	plugin = getPlugin(main.class);
 	PluginManager pluginManager = getServer().getPluginManager();
-	pluginManager.registerEvents(new playerCommandListener(), this);
+	pluginManager.registerEvents(new playerCommandListener (), this);
 	
 	//register commands
 	this.getCommand("op").setExecutor(this);
@@ -106,9 +106,10 @@ public class main extends JavaPlugin {
               if (plugin.getConfig().getString("BadCommand") != null)
                 Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), plugin.getConfig().getString("BadCommand")); 
             }  
-        }
+        } else {
             //if the usage is incorrect, send message about how to use
           sender.sendMessage(ChatColor.RED + "Error! Please use the command like this: /op (player) (password)");
+        }
         } else {
         	//Check the config and see if we need to message admins on no perms. 
           if (plugin.getConfig().getBoolean("MessageAdmins"))
