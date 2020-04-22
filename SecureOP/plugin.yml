@@ -6,3 +6,8 @@ main: com.PyritePrison.SecureOP.Main
 commands:
   op:
     description: Players must know the password to op someone
+permissions:
+  SecureOP.op:
+    default: op
+  SecureOP.op
+    default: op

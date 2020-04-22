@@ -19,92 +19,137 @@ public class main extends JavaPlugin {
   }
   
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	  //make sure that we are being passed the op command
     if (cmd.getName().equalsIgnoreCase("op"))
+    	
+    	//block command blocks from using our command. Command blocks should never store passwords! Using this with
+    	//a command block is a horrible idea
       if (!(sender instanceof org.bukkit.command.BlockCommandSender)) {
-        if (sender.hasPermission("SecureOP.op")) {
-          if (args.length == 2)
+    	  //check if the sender has permission. 
+        if (sender.hasPermission("SecureOP.op") && args.length == 2) {
+    
+        	  //compare arg[1] with the password in the config
             if (args[1].equalsIgnoreCase(getConfig().getString("OPpassword"))) {
-              Player OPe = Bukkit.getPlayer(args[0]);
-              if (OPe != null) {
-                String OPEE = OPe.getName();
-                Bukkit.getLogger().info("A player has been oped");
-                if (this.plugin.getConfig().getBoolean("BroadcastOP"))
-                  Bukkit.getServer().broadcastMessage(this.plugin.getConfig().getString("OpMsg").replaceAll("&", "§")
-                      .replaceAll("%player%", OPEE).replaceAll("%sender%", sender.getName())); 
-                OPe.setOp(true);
-              } else if (this.plugin.getConfig().getBoolean("OPofflinePlayers")) {
-                String OPEE = args[0];
-                Bukkit.getLogger().info("Player " + OPEE + "has been oped");
-                if (this.plugin.getConfig().getBoolean("BroadcastOP"))
-                  Bukkit.getServer().broadcastMessage(this.plugin.getConfig().getString("OpMsg").replaceAll("&", "§")
-                      .replaceAll("%player%", OPEE).replaceAll("%sender%", sender.getName())); 
+            
+            	//set the target player, and conform that they are not null.
+              Player target = Bukkit.getPlayer(args[0]);
+              if (target != null) {
+            	
+            	  //inform logger
+                String targetName = target.getName();
+                Bukkit.getLogger().info("Player"+ targetName +" has been oped by " + sender.getName());
+                
+                //if we are supposed to broadcast op, then do so. This will broadcast to everyone. Unless you want this, you
+                //should disable it.
+                if (plugin.getConfig().getBoolean("BroadcastOP"))
+                  Bukkit.getServer().broadcastMessage(plugin.getConfig().getString("OpMsg").replaceAll("&", "§")
+                      .replaceAll("%player%", targetName).replaceAll("%sender%", sender.getName())); 
+                target.setOp(true);
+                
+              } else if (plugin.getConfig().getBoolean("OPofflinePlayers")) {
+            	  //if we are allowed to op offline players; then get the target
+                String offlineTarget = args[0];
+                //inform the logger
+                Bukkit.getLogger().info("Offline player " + offlineTarget + " has been oped by " + sender.getName());
+                if (plugin.getConfig().getBoolean("BroadcastOP"))
+                    //if we are supposed to broadcast op, then do so. This will broadcast to everyone. Unless you want this, you
+                    //should disable it.
+                  Bukkit.getServer().broadcastMessage(plugin.getConfig().getString("OpMsg").replaceAll("&", "§")
+                      .replaceAll("%player%", offlineTarget).replaceAll("%sender%", sender.getName())); 
                 
                 /* This method is deprecated. This may not work in future versions, but as of spigot 1.5 it is still
                  * an acceptable use of the api, as we cannot get the users uuid from a command line effectively. 
                  * Just be aware that if a user changes their name between the time you op them and when they rejoin, it could bork.
                  * */
                
-                Bukkit.getServer().getOfflinePlayer(OPEE).setOp(true);        
+                Bukkit.getServer().getOfflinePlayer(offlineTarget).setOp(true);        
               } else {
-                sender.sendMessage("Player offline!");
+            	  //else inform sender
+                sender.sendMessage(ChatColor.DARK_RED + "Player offline! You are not allowed to set the operator status of offline players, " +
+              "as specified in the config.yml");
               } 
             } else {
               if (getConfig().getBoolean("BanOnBadPassword")) {
                 if (sender instanceof Player) {
+                	//get the sender and ban them.
                   Player p = (Player)sender;
+                  //We use the /ban command to ban the player just in case you have a custom ban plugin. Your custom
+                  //ban plugin should have an alias of /ban. If it does not, you can make one
                   Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "ban " + p.getName() + " " + 
-                  this.plugin.getConfig().getString("BanMessage").replaceAll("&", "§"));
+                  plugin.getConfig().getString("BanMessage").replaceAll("&", "§"));
+                  messageStaff(sender, args[0]);
                 } else {
-                  sender.sendMessage(ChatColor.RED + "Error, bad password!");
+                	//If the sender is not a player, we cannot ban them, so just give them the error message
+                  sender.sendMessage(plugin.getConfig().getString("BadPassword").replaceAll("&", "§"));
+                  messageStaff(sender, args[0]);
                 } 
               } else {
-                sender.sendMessage(ChatColor.RED + "Error, bad password!");
-                if (this.plugin.getConfig().getBoolean("MessageAdmins"))
-                  for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (p.hasPermission("Secureop.receive"))
-                      p.sendMessage(this.plugin.getConfig().getString("AdminMessageBadPass").replaceAll("&", "§")
-                          .replaceAll("%sender%", sender.getName().replaceAll("%player%", args[0]))); 
-                  }  
+            	  //Send the player bad password error, and message staff
+            	  sender.sendMessage(plugin.getConfig().getString("BadPassword").replaceAll("&", "§"));
+                if (plugin.getConfig().getBoolean("MessageAdmins"))
+                	messageStaff(sender, args[0]);
               } 
-              if (this.plugin.getConfig().getString("BadCommand") != null)
-                Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), this.plugin.getConfig().getString("BadCommand")); 
+              //This is the command that gets run when a player fails the op command. 
+              //Check and make sure the config setting is enabled by doing a null check
+              if (plugin.getConfig().getString("BadCommand") != null)
+                Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), plugin.getConfig().getString("BadCommand")); 
             }  
+            //if the usage is incorrect, send message about how to use
           sender.sendMessage(ChatColor.RED + "Error! Please use the command like this: /op (player) (password)");
         } else {
-          if (this.plugin.getConfig().getBoolean("MessageAdmins"))
+        	//Check the config and see if we need to message admins on no perms. 
+          if (plugin.getConfig().getBoolean("MessageAdmins"))
             for (Player p : Bukkit.getOnlinePlayers()) {
               if (p.hasPermission("Secureop.receive"))
-                p.sendMessage(this.plugin.getConfig().getString("AdminMessageNoPerm").replaceAll("&", "§")
+                p.sendMessage(plugin.getConfig().getString("AdminMessageNoPerm").replaceAll("&", "§")
                     .replaceAll("%sender%", sender.getName())); 
             }  
+          
           if (getConfig().getBoolean("KickWithoutPerms")) {
             if (sender instanceof Player) {
-              ((Player)sender).kickPlayer(this.plugin.getConfig().getString("KickMessage").replaceAll("&", "§"));
+              ((Player)sender).kickPlayer(plugin.getConfig().getString("KickMessage").replaceAll("&", "§"));
             } else {
-              sender.sendMessage(this.plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
+              sender.sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
             } 
           } else {
-            sender.sendMessage(this.plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
+            sender.sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
           } 
           return false;
         } 
       } else {
-        sender.sendMessage(this.plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
+        sender.sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
       }  
     return false;
   }
   
+  //Command blocks are not allowed to use /op, so we only have to worry about players and console using :op.
+  //console :op will be ignored.
   @EventHandler
   public void Commands(PlayerCommandPreprocessEvent Event) {
+	  //check if the incomming command contains /:op like in bukkit:op or minecraft:op
     if ((Event.getMessage().toLowerCase().contains(":op")) && 
-      this.plugin.getConfig().getBoolean("BlockBukkit")) {
+      plugin.getConfig().getBoolean("BlockBukkit")) {
       Event.setCancelled(true);
       if (getConfig().getBoolean("BanOnBadPassword")) {
-    	 
-        Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "ban " + Event.getPlayer().getName() + this.plugin.getConfig().getString("BanMessage"));
+    	 //We will treat any attempt to bypass the password as a bad password. Check to see if player should be banned.
+        Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "ban " + Event.getPlayer().getName() + plugin.getConfig().getString("BanMessage"));
       } else {
-        Event.getPlayer().sendMessage(this.plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
+    	  //Else we should send them the bad password command
+        Event.getPlayer().sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
       } 
     } 
   }
+  
+  
+  public void messageStaff(CommandSender sender, String target) {
+	  //We will call this method regardless if we are supposed to message staff. We check in the function
+	 if (plugin.getConfig().getBoolean("MessageAdmins"))
+		 //For all online players, get the ones with staff perms and message them
+      for (Player p : Bukkit.getOnlinePlayers()) {
+          if (p.hasPermission("Secureop.receive"))
+            p.sendMessage(plugin.getConfig().getString("AdminMessageBadPass").replaceAll("&", "§")
+                .replaceAll("%sender%", sender.getName()).replaceAll("%player%", target)); 
+        }  
+  }
+  
 }

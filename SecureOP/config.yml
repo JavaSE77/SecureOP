@@ -9,15 +9,16 @@ BadCommand: 'adminchat Someone is using /op!'
 BroadcastOP: true
 #Allow offline players to be opped? 
 OPofflinePlayers: true
-#Block /bukkit:op? WARNING! SETTING THIS TO FALSE CREATES A SERVER SECURITY PROBLEM
+#Block /bukkit:op? (blocks all commands that include :op) WARNING! SETTING THIS TO FALSE CREATES A SERVER SECURITY PROBLEM
 BlockBukkit: true
 #Message online admins when a player tries to uses command /op? (Permission Secureop.receive )
 MessageAdmins: true
 #
-#Messages
+#Messages. Use %player% for the target player, and %sender% for the command sender
 #
 OpMsg: '&bPlayer &5%player% &bhas been OPed by &5%sender%'
+BadPassword: '&4Authentication failed.'
 AdminMessageNoPerm: '&4Player %sender% tried to use /op!'
 AdminMessageBadPass: '&4Admin %sender% tried to op %player%'
-ErrorNoPerms: '&cError, you cant use that command because it can damage the server!'
+ErrorNoPerms: '&cError, you cannot use that command because it can damage the server!'
 BanMessage: '&4YOU ARE NOT ALLOWED TO TRY AND GUESS THE PASSWORD OF THE COMMAND /OP'
