@@ -2,7 +2,7 @@ name: SecureOP
 author: jeeperscreeper77
 version: 1.10
 description: Use a password
-main: club.hardcoreminecraft.javase.secureop.Main
+main: club.hardcoreminecraft.javase.secureop.main
 commands:
   op:
     description: Players must know the password to op someone

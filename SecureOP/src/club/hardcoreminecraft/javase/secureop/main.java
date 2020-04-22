@@ -5,14 +5,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
+
 public class main extends JavaPlugin {
-  JavaPlugin plugin = this;
+	static main plugin;
   
   public void onEnable() {
+
+	  //register new events: 		
+	plugin = getPlugin(main.class);
+	PluginManager pluginManager = getServer().getPluginManager();
+	pluginManager.registerEvents(new playerCommandListener(), this);
+	
+	//register commands
+	this.getCommand("op").setExecutor(this);
+	
+	//setup the config
     getConfig().options().copyDefaults(true);
     saveDefaultConfig();
     getServer().getLogger().info("This server is being protected by secureOP plugin created by http://www.spigotmc.org/members/jeeperscreeper77.42792/Looking for a new hosting company? Use my referral link: https://clients.mcprohosting.com/aff.php?aff=16689");
@@ -26,7 +37,8 @@ public class main extends JavaPlugin {
     	//a command block is a horrible idea
       if (!(sender instanceof org.bukkit.command.BlockCommandSender)) {
     	  //check if the sender has permission. 
-        if (sender.hasPermission("SecureOP.op") && args.length == 2) {
+        if (sender.hasPermission("SecureOP.op")) {
+        	if(args.length == 2) {
     
         	  //compare arg[1] with the password in the config
             if (args[1].equalsIgnoreCase(getConfig().getString("OPpassword"))) {
@@ -94,6 +106,7 @@ public class main extends JavaPlugin {
               if (plugin.getConfig().getString("BadCommand") != null)
                 Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), plugin.getConfig().getString("BadCommand")); 
             }  
+        }
             //if the usage is incorrect, send message about how to use
           sender.sendMessage(ChatColor.RED + "Error! Please use the command like this: /op (player) (password)");
         } else {
@@ -122,23 +135,7 @@ public class main extends JavaPlugin {
     return false;
   }
   
-  //Command blocks are not allowed to use /op, so we only have to worry about players and console using :op.
-  //console :op will be ignored.
-  @EventHandler
-  public void Commands(PlayerCommandPreprocessEvent Event) {
-	  //check if the incomming command contains /:op like in bukkit:op or minecraft:op
-    if ((Event.getMessage().toLowerCase().contains(":op")) && 
-      plugin.getConfig().getBoolean("BlockBukkit")) {
-      Event.setCancelled(true);
-      if (getConfig().getBoolean("BanOnBadPassword")) {
-    	 //We will treat any attempt to bypass the password as a bad password. Check to see if player should be banned.
-        Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "ban " + Event.getPlayer().getName() + plugin.getConfig().getString("BanMessage"));
-      } else {
-    	  //Else we should send them the bad password command
-        Event.getPlayer().sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
-      } 
-    } 
-  }
+
   
   
   public void messageStaff(CommandSender sender, String target) {
