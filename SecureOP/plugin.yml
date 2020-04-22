@@ -2,12 +2,12 @@ name: SecureOP
 author: jeeperscreeper77
 version: 1.10
 description: Use a password
-main: com.PyritePrison.SecureOP.Main
+main: club.hardcoreminecraft.javase.secureop.Main
 commands:
   op:
     description: Players must know the password to op someone
 permissions:
   SecureOP.op:
     default: op
-  SecureOP.op
+  Secureop.receive:
     default: op
