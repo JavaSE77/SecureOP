@@ -13,7 +13,7 @@ public class playerCommandListener implements Listener {
 	  //console :op will be ignored.
 	  @EventHandler
 	  public void Commands(PlayerCommandPreprocessEvent Event) {
-		  //check if the incomming command contains /:op like in bukkit:op or minecraft:op
+		  //check if the incoming command contains /:op like in bukkit:op or minecraft:op
 	    if ((Event.getMessage().toLowerCase().contains(":op")) && 
 	      main.plugin.getConfig().getBoolean("BlockBukkit")) {
 	      Event.setCancelled(true);
