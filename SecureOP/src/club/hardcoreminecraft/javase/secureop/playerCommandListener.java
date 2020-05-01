@@ -24,7 +24,18 @@ public class playerCommandListener implements Listener {
 	    	  //Else we should send them the bad password command
 	        Event.getPlayer().sendMessage(main.plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
 	      } 
-	    } 
+	    } else 
+	    	if ((Event.getMessage().toLowerCase().contains(":deop")) && 
+	  	      main.plugin.getConfig().getBoolean("BlockBukkit")) {
+		      Event.setCancelled(true);
+		      if (main.plugin.getConfig().getBoolean("BanOnBadPassword")) {
+		    	 //We will treat any attempt to bypass the password as a bad password. Check to see if player should be banned.
+		        Bukkit.dispatchCommand((CommandSender)Bukkit.getConsoleSender(), "ban " + Event.getPlayer().getName() + " " + main.plugin.getConfig().getString("BanMessage"));
+		      } else {
+		    	  //Else we should send them the bad password command
+		        Event.getPlayer().sendMessage(main.plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§"));
+		      } 
+		    } 
 	  }
 	
 }

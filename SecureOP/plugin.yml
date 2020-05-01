@@ -6,8 +6,12 @@ main: club.hardcoreminecraft.javase.secureop.main
 commands:
   op:
     description: Players must know the password to op someone
+  deop:
+    description: Players must know the password to deop someone
 permissions:
   SecureOP.op:
+    default: op
+  SecureOP.deop:
     default: op
   Secureop.receive:
     default: op
