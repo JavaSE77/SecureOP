@@ -86,14 +86,14 @@ public class deopcmd {
 		      } else {
 		      	//break everything up into functions
 		      	//messages all staff with the permission node
-		      	main.messageStaffPerm(sender, args[0], cmd.getName());  
+		      	main.messageStaffPerm(sender, cmd.getName());  
 		        
 		      	//if true, player has been kicked. Else send a message
 		        if (!main.kickPlayer(sender))
-		      	  main.noPerms(sender, args[0], cmd.getName());
+		      	  main.noPerms(sender, cmd.getName());
 		        
 		        return;
 		      } 
-		    } else main.noPerms(sender, args[0], cmd.getName());
+		    } else main.noPerms(sender, cmd.getName());
 		  }
 }

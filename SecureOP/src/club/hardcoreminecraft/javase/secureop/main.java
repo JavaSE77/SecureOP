@@ -56,14 +56,14 @@ public class main extends JavaPlugin {
         }  
   }
   
-  public static void messageStaffPerm(CommandSender sender, String target, String cmd) {
+  public static void messageStaffPerm(CommandSender sender, String cmd) {
 	  //We will call this method regardless if we are supposed to message staff. We check in the function
 	 if (plugin.getConfig().getBoolean("MessageAdmins"))
 		 //For all online players, get the ones with staff perms and message them
       for (Player p : Bukkit.getOnlinePlayers()) {
           if (p.hasPermission("Secureop.receive"))
             p.sendMessage(plugin.getConfig().getString("AdminMessageNoPerm").replaceAll("&", "§")
-                .replaceAll("%sender%", sender.getName()).replaceAll("%player%", target).replaceAll("%command%", cmd)); 
+                .replaceAll("%sender%", sender.getName()).replaceAll("%command%", cmd)); 
         }  
   }
   
@@ -78,9 +78,9 @@ public class main extends JavaPlugin {
 	return false;
   }
   
-  public static void noPerms(CommandSender sender, String target, String cmd) {
+  public static void noPerms(CommandSender sender, String cmd) {
 	  sender.sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§")
-	  .replaceAll("%sender%", sender.getName()).replaceAll("%player%", target).replaceAll("%command%", cmd));
+	  .replaceAll("%sender%", sender.getName()).replaceAll("%command%", cmd));
   }
   
   
