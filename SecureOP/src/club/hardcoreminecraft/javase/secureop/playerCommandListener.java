@@ -59,7 +59,14 @@ public class playerCommandListener implements Listener {
 	    		cmdHandler.handleCommand();
 	    		Event.setCancelled(true);
 	    		
-	    	}
+	    	} else 
+		    	if(prefix.equalsIgnoreCase("/setoppassword")) {
+		    		commandHandler cmdHandler = new setOpPassword(main.plugin, Event.getPlayer(), prefix, args);
+		    		cmdHandler.handleCommand();
+		    		Event.setCancelled(true);
+		    		
+		    	}
+		    	
 	    	
 	    }
 	    

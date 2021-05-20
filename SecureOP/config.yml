@@ -1,7 +1,7 @@
 #OP password is now stored in the password.txt file. 
 #Kick people without permission to use /op?
 KickWithoutPerms: true
-#Ban poeple who use incorrect passwords?
+#Ban people who use incorrect passwords?
 BanOnBadPassword: true
 #This command will run whenever someone uses the wrong password (Set to '' to disable)
 BadCommand: 'adminchat Someone is using /op!'
