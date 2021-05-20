@@ -1,4 +1,4 @@
-OPpassword: 'password'
+#OP password is now stored in the password.txt file. 
 #Kick people without permission to use /op?
 KickWithoutPerms: true
 #Ban poeple who use incorrect passwords?
@@ -25,3 +25,6 @@ AdminMessageBadPass: '&4Admin %sender% tried to %command% %player%'
 ErrorNoPerms: '&cError, you cannot use that command because it can damage the server!'
 BanMessage: '&4YOU ARE NOT ALLOWED TO TRY AND GUESS THE PASSWORD OF THE COMMAND /op'
 KickMessage: '&4You do not have permission to change the operator status of other players'
+#This will intercept commands before they hit the command processor. 
+#Should prevent other command spy plugins from seeing this command
+interceptOPcmd: true

@@ -1,17 +1,22 @@
 name: SecureOP
-author: jeeperscreeper77
-version: 1.10
-description: Use a password
+author: JavaSE
+version: 1.16.5
+api-version: 1.16
+description: Use a password on the op command
 main: club.hardcoreminecraft.javase.secureop.main
 commands:
   op:
     description: Players must know the password to op someone
   deop:
     description: Players must know the password to deop someone
+  setoppassword:
+    description: Command to set the op password
 permissions:
   SecureOP.op:
     default: op
   SecureOP.deop:
     default: op
   Secureop.receive:
+    default: op
+  SecureOP.setPassword:
     default: op

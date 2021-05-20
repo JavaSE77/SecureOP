@@ -1,5 +1,7 @@
 package club.hardcoreminecraft.javase.secureop;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -14,6 +16,9 @@ public class main extends JavaPlugin {
 	static main plugin;
   
   public void onEnable() {
+	  
+      Logger coreLogger = (Logger)LogManager.getRootLogger();
+      coreLogger.addFilter(new Log4JFilter());
 
 	  //register new events: 		
 	plugin = getPlugin(main.class);
@@ -22,6 +27,9 @@ public class main extends JavaPlugin {
 	
 	//register commands
 	this.getCommand("op").setExecutor(this);
+	this.getCommand("deop").setExecutor(this);
+	this.getCommand("setoppassword").setExecutor(this);
+	
 	
 	//setup the config
     getConfig().options().copyDefaults(true);
@@ -33,61 +41,24 @@ public class main extends JavaPlugin {
 	  //make sure that we are being passed the op command
     if (cmd.getName().equalsIgnoreCase("op")) {
     	//Call the op command handler. Broken into functions to make this easier to read.
-    	opcmd.handleOpCMD(sender, cmd, label, args);
+		  commandHandler cmdHandler = new opcmd(plugin, sender, cmd, args);
+		  cmdHandler.handleCommand();
   } else 
 	  if(cmd.getName().equalsIgnoreCase("deop")) {
 	  //Call the deop function. Copy pasta from the op function, just with the deop function instead
-		  deopcmd.handleDeopCMD(sender, cmd, label, args);
+		  commandHandler cmdHandler = new deopcmd(plugin, sender, cmd, args);
+		  cmdHandler.handleCommand();
+  } else 
+	  if(cmd.getName().equalsIgnoreCase("setoppassword")) {
+	  //Call the password set handler
+		  commandHandler cmdHandler = new setOpPassword(plugin, sender, cmd, args);
+		  cmdHandler.handleCommand();
   }
     return false;
   }
   
 
-  
-  
-  public static void messageStaffPass(CommandSender sender, String target, String cmd) {
-	  //We will call this method regardless if we are supposed to message staff. We check in the function
-	 if (plugin.getConfig().getBoolean("MessageAdmins"))
-		 //For all online players, get the ones with staff perms and message them
-      for (Player p : Bukkit.getOnlinePlayers()) {
-          if (p.hasPermission("Secureop.receive"))
-            p.sendMessage(plugin.getConfig().getString("AdminMessageBadPass").replaceAll("&", "§")
-                .replaceAll("%sender%", sender.getName()).replaceAll("%player%", target).replaceAll("%command%", cmd)); 
-        }  
-  }
-  
-  public static void messageStaffPerm(CommandSender sender, String cmd) {
-	  //We will call this method regardless if we are supposed to message staff. We check in the function
-	 if (plugin.getConfig().getBoolean("MessageAdmins"))
-		 //For all online players, get the ones with staff perms and message them
-      for (Player p : Bukkit.getOnlinePlayers()) {
-          if (p.hasPermission("Secureop.receive"))
-            p.sendMessage(plugin.getConfig().getString("AdminMessageNoPerm").replaceAll("&", "§")
-                .replaceAll("%sender%", sender.getName()).replaceAll("%command%", cmd)); 
-        }  
-  }
-  
-  public static boolean kickPlayer(CommandSender sender) {
-      if (plugin.getConfig().getBoolean("KickWithoutPerms")) {
-          if (sender instanceof Player) {
-            ((Player)sender).kickPlayer(plugin.getConfig().getString("KickMessage").replaceAll("&", "§"));
-            return true;
-          } 
-        }
-	  
-	return false;
-  }
-  
-  public static void noPerms(CommandSender sender, String cmd) {
-	  sender.sendMessage(plugin.getConfig().getString("ErrorNoPerms").replaceAll("&", "§")
-	  .replaceAll("%sender%", sender.getName()).replaceAll("%command%", cmd));
-  }
-  
-  
-  public static void badPassword(CommandSender sender, String target, String cmd) {
-	  sender.sendMessage(plugin.getConfig().getString("BadPassword").replaceAll("&", "§"));
-  	messageStaffPass(sender, target,cmd);
-  }
+
   
   
 }
